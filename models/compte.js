@@ -1,7 +1,8 @@
 const mongoose = require('mongoose')
+const bcrypt = require('bcrypt')
 const compteSchema = new mongoose.Schema({
   idCompte: {
-    type: Int16Array,
+    type: Number,
     required: true,
     unique: true
   },

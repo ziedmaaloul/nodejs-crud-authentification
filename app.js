@@ -30,8 +30,12 @@ app.listen(process.env.PORT, () => {
 const compteRouter = require("./routes/compte.route");
 app.use("/api/comptes", compteRouter);
 
-// const scategorieRouter = require("./routes/scategorie.route");
-// app.use("/api/scategories", scategorieRouter);
+const Livarires = require("./routes/livraire.route");
+app.use("/api/livraires", Livarires);
 
-// const articleRouter =require("./routes/article.route")
-// app.use('/api/articles', articleRouter);
+
+const client = require("./routes/client.route");
+app.use("/api/clients", client);
+
+const payement = require("./routes/payement.route");
+app.use("/api/payements", payement);
