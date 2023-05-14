@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Payement = require("../models/payement");
-
+const {verifyToken} =require("../middleware/veriftoken")
 
 // Find All
 
@@ -17,7 +17,7 @@ router.get("/", async (req, res) => {
 
 // Create New Payement
 
-router.post("/", async (req, res) => {
+router.post("/", verifyToken , async (req, res) => {
   const { type, motif , datePaye , clientID } = req.body;
   const newPayement = new Payement({
     type: type,
@@ -35,7 +35,7 @@ router.post("/", async (req, res) => {
 
 
 // chercher une Payement
-router.get("/:idPayement", async (req, res) => {
+router.get("/:idPayement", verifyToken , async (req, res) => {
   try {
     const pay = await Payement.findById(req.params.idPayement);
     res.status(200).json(pay);
@@ -46,7 +46,7 @@ router.get("/:idPayement", async (req, res) => {
 
 
 // modifier un payement
-router.put("/:idPayement", async (req, res) => {
+router.put("/:idPayement", verifyToken , async (req, res) => {
   const { type, motif, datePaye ,clientID } = req.body;
   const id = req.params.idPayement;
   console.log(id);
@@ -65,7 +65,7 @@ router.put("/:idPayement", async (req, res) => {
   }
 });
 // Supprimer un livraire
-router.delete("/:idPayement", async (req, res) => {
+router.delete("/:idPayement", verifyToken , async (req, res) => {
   const id = req.params.idPayement;
   await Payement.findByIdAndDelete(id);
   res.json({ message: "Payement deleted successfully." });

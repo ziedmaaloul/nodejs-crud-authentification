@@ -3,6 +3,7 @@ const router = express.Router();
 const Compte = require("../models/compte");
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
+const {verifyToken} =require("../middleware/veriftoken")
 
 
 // afficher la liste des utilisateurs.
@@ -70,40 +71,21 @@ router.post('/login', async (req, res) => {
   }
 });
 
-
-// modifier un article
-// router.put("/:articleId", async (req, res) => {
-//   const {
-//     reference,
-//     designation,
-//     prix,
-//     marque,
-//     qtestock,
-//     imageart,
-//     scategorieID,
-//   } = req.body;
-//   const id = req.params.articleId;
-//   try {
-//     const art1 = {
-//       reference: reference,
-//       designation: designation,
-//       prix: prix,
-//       marque: marque,
-//       qtestock: qtestock,
-//       imageart: imageart,
-//       scategorieID: scategorieID,
-//       _id: id,
-//     };
-//     await Article.findByIdAndUpdate(id, art1);
-//     res.json(art1);
-//   } catch (error) {
-//     res.status(404).json({ message: error.message });
-//   }
-// });
-// Supprimer un article
-router.delete("/:articleId", async (req, res) => {
-  const id = req.params.articleId;
-  await Article.findByIdAndDelete(id);
-  res.json({ message: "article deleted successfully." });
+// modifier un compte
+router.put("/", verifyToken , async (req, res) => {
+  const { mot_de_passe, nomUtilisateur} = req.body;
+  const id = req.params.idLivraire;
+  try {
+    const compte = {
+      mot_de_passe: mot_de_passe,
+      nomUtilisateur: nomUtilisateur,
+      _id: req.user.id,
+    };
+    await Compte.findByIdAndUpdate(id, compte);
+    res.json(compte);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
 });
+
 module.exports = router;

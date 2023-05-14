@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Client = require("../models/client");
-
+const {verifyToken} =require("../middleware/veriftoken")
 
 // Find All
 
@@ -18,15 +18,15 @@ router.get("/", async (req, res) => {
 // Create new Cient
 
 
-router.post("/", async (req, res) => {
-   const { nomClient, postnomClient , prenomClient , adresseClient ,  numTel , compteID } = req.body;
+router.post("/", verifyToken , async (req, res) => {
+   const { nomClient, postnomClient , prenomClient , adresseClient ,  numTel } = req.body;
   const newClient = new Client({
     postnomClient: postnomClient,
     numTel: numTel,
     prenomClient : prenomClient,
     adresseClient : adresseClient,
     nomClient: nomClient,
-    compteID: compteID,
+    compteID: req.user.id,
   });
   try {
     await newClient.save();
@@ -38,7 +38,7 @@ router.post("/", async (req, res) => {
 
 
 // chercher un Client
-router.get("/:idClient", async (req, res) => {
+router.get("/:idClient", verifyToken , async (req, res) => {
   try {
     const cli = await Client.findById(req.params.idClient);
     res.status(200).json(cli);
@@ -49,8 +49,8 @@ router.get("/:idClient", async (req, res) => {
 
 
 // modifier un Cleint
-router.put("/:idClient", async (req, res) => {
-  const { nomClient, postnomClient , prenomClient , adresseClient ,  numTel , compteID } = req.body;
+router.put("/:idClient", verifyToken , async (req, res) => {
+  const { nomClient, postnomClient , prenomClient , adresseClient ,  numTel } = req.body;
   const id = req.params.idClient;
   console.log(id);
   try {
@@ -60,7 +60,7 @@ router.put("/:idClient", async (req, res) => {
       postnomClient: postnomClient,
       prenomClient : prenomClient,
       adresseClient : adresseClient,
-      compteID: compteID,
+      compteID: req.user.id,
       _id: id,
     };
     await Client.findByIdAndUpdate(id, client);
@@ -70,7 +70,7 @@ router.put("/:idClient", async (req, res) => {
   }
 });
 // Supprimer un Cleint
-router.delete("/:idClient", async (req, res) => {
+router.delete("/:idClient", verifyToken , async (req, res) => {
   const id = req.params.idClient;
   await Client.findByIdAndDelete(id);
   res.json({ message: "idClient deleted successfully." });
